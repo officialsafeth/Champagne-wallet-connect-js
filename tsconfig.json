@@ -1,28 +1,20 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "lib": [
-      "ESNext",
-      "dom"
-    ],
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "NodeNext",
-    "outDir": "./lib/esm",
-    "declarationDir": "./lib/esm/types",
+    "moduleResolution": "node",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "checkJs": true,
-    "allowJs": true,
+    "outDir": "./lib/esm",
     "declaration": true,
-    "declarationMap": true,
+    "declarationDir": "./lib/esm/types",
     "sourceMap": true,
-    "inlineSources": true,
-    "allowSyntheticDefaultImports": true
+    "declarationMap": true,
+    "experimentalDecorators": true,
+    "lib": ["ESNext", "dom"]
   },
-  "files": ["./src/index.ts"],
-  "exclude": [
-    "lib"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "lib"]
 }
