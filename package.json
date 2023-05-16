@@ -1,5 +1,5 @@
 {
-  "name": "@hashgraph/hedera-wallet-connect",
+  "name": "champagne-wallet",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hashgraph/hedera-wallet-connect"
+    "url": "https://github.com/officialsafeth/Champagne-wallet-connect-js"
   },
   "scripts": {
     "clean": "rimraf lib",
