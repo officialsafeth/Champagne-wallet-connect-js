@@ -1,5 +1,5 @@
 {
-  "name": "@hashgraph/hedera-wallet-connect",
+  "name": "champagne-wallet",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -10,7 +10,7 @@
   },
   "types": "./lib/esm/types/index.d.ts",
   "main": "./lib/esm/index.js",
-  "author": "Blade Labs",
+  "author": "Safeth Ministries",
   "license": "MIT",
   "repository": {
     "type": "git",
