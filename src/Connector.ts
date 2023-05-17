@@ -1,4 +1,4 @@
-/*-
+/*
  *
  * Hedera Wallet Connect
  *
@@ -19,10 +19,11 @@
  */
 
 import SignClient from "@walletconnect/sign-client";
-import {catchError, from, timeout} from "rxjs";
-import {Signer} from "@hashgraph/sdk";
-import {SessionTypes, SignClientTypes} from "@walletconnect/types";
-import {getAppMetadata, getSdkError} from "@walletconnect/utils";
+import { from } from "rxjs";
+import { catchError, timeout } from "rxjs/operators";
+import { Signer } from "@hashgraph/sdk";
+import { SessionTypes, SignClientTypes } from "@walletconnect/types";
+import { getAppMetadata, getSdkError } from "@walletconnect/utils";
 
 declare type Client = SignClient.default;
 
@@ -74,7 +75,7 @@ export class Connector {
                   } catch (e) {
                     console.log("Non existing session with topic:", session.topic)
                   }
-                  reject("Non existing session");
+                  return reject("Non existing session");
                 })
               ).subscribe(() => {
               resolve(session);
@@ -88,7 +89,6 @@ export class Connector {
     this.session = null;
     return this.session;
   }
-
 
   async disconnect() {
     if (!this.client) {

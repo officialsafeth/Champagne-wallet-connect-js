@@ -1,4 +1,4 @@
-/*-
+/*
  *
  * Hedera Wallet Connect
  *
@@ -19,6 +19,7 @@
  */
 
 import {AccountId, LedgerId} from "@hashgraph/sdk";
+import {PrivateKey} from "@hashgraph/sdk"; // The new import
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import {SignClient} from "@walletconnect/sign-client";
 import {SessionTypes, SignClientTypes} from "@walletconnect/types";
