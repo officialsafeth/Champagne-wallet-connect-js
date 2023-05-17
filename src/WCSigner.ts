@@ -110,214 +110,215 @@ export class WCSigner implements Signer {
   }
 
   getAccountId(): AccountId {
-    return this.accountId;
-  }
+return this.accountId;
+}
 
-  async getAccountKey(): Promise<Key> {
-    return this.wrappedRequest<Key>({
-      topic: this.topic,
-      request: {
-        method: "getAccountKey",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+async getAccountKey(): Promise<Key> {
+return this.wrappedRequest<Key>({
+topic: this.topic,
+request: {
+method: "getAccountKey",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  getLedgerId(): LedgerId {
-    return this.ledgerId;
-  }
+getLedgerId(): LedgerId {
+return this.ledgerId;
+}
 
-  async getNetwork(): Promise<{[key: string]: (string | AccountId)}> {
-    return this.wrappedRequest<{[key: string]: (string | AccountId)}>({
-      topic: this.topic,
-      request: {
-        method: "getNetwork",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+async getNetwork(): Promise<{[key: string]: (string | AccountId)}> {
+return this.wrappedRequest<{[key: string]: (string | AccountId)}>({
+topic: this.topic,
+request: {
+method: "getNetwork",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  async getMirrorNetwork(): Promise<string[]> {
-    return this.wrappedRequest<string[]>({
-      topic: this.topic,
-      request: {
-        method: "getMirrorNetwork",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+async getMirrorNetwork(): Promise<string[]> {
+return this.wrappedRequest<string[]>({
+topic: this.topic,
+request: {
+method: "getMirrorNetwork",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  async sign(messages: Uint8Array[], signOptions?: Record<string, any>): Promise<SignerSignature[]> {
-    const result = await this.wrappedRequest<SignerSignature[]>({
-      topic: this.topic,
-      request: {
-        method: "sign",
-        params: {
-          accountId: this.accountId.toString(),
-          messages: messages.map(message => Buffer.from(message).toString("base64")),
-          signOptions
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
+async sign(messages: Uint8Array[], signOptions?: Record<string, any>): Promise<SignerSignature[]> {
+const result = await this.wrappedRequest<SignerSignature[]>({
+topic: this.topic,
+request: {
+method: "sign",
+params: {
+accountId: this.accountId.toString(),
+messages: messages.map(message => Buffer.from(message).toString("base64")),
+signOptions
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+return Promise.resolve(result.map(r => convertToSignerSignature(r)));
+}
 
-    return Promise.resolve(result.map(r => convertToSignerSignature(r)));
-  }
+private async extensionMethodCall<T>(name, args: Record<any, any>): Promise<T> {
+const result = await this.wrappedRequest<T>({
+topic: this.topic,
+request: {
+method: name,
+params: {
+args,
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+})
+return Promise.resolve(result);
+}
 
-  private async extensionMethodCall<T>(name, args: Record<any, any>): Promise<T> {
-    const result = await this.wrappedRequest<T>({
-      topic: this.topic,
-      request: {
-        method: name,
-        params: {
-          args,
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    })
-    return Promise.resolve(result);
-  }
+getAccountBalance(): Promise<AccountBalance> {
+return this.wrappedRequest<AccountBalance>({
+topic: this.topic,
+request: {
+method: "getAccountBalance",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  getAccountBalance(): Promise<AccountBalance> {
-    return this.wrappedRequest<AccountBalance>({
-      topic: this.topic,
-      request: {
-        method: "getAccountBalance",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+getAccountInfo(): Promise<AccountInfo> {
+return this.wrappedRequest<AccountInfo>({
+topic: this.topic,
+request: {
+method: "getAccountInfo",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  getAccountInfo(): Promise<AccountInfo> {
-    return this.wrappedRequest<AccountInfo>({
-      topic: this.topic,
-      request: {
-        method: "getAccountInfo",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+getAccountRecords(): Promise<TransactionRecord[]> {
+return this.wrappedRequest<TransactionRecord[]>({
+topic: this.topic,
+request: {
+method: "getAccountRecords",
+params: {
+accountId: this.accountId.toString()
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
+}
 
-  getAccountRecords(): Promise<TransactionRecord[]> {
-    return this.wrappedRequest<TransactionRecord[]>({
-      topic: this.topic,
-      request: {
-        method: "getAccountRecords",
-        params: {
-          accountId: this.accountId.toString()
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-  }
+async signTransaction<T extends Transaction>(transaction: T): Promise<T> {
+if (!transaction.isFrozen()) {
+await this.populateTransaction(transaction);
+}await this.checkTransaction(transaction);
 
-  async signTransaction<T extends Transaction>(transaction: T): Promise<T> {
-    const encodedTransaction = await this.wrappedRequest<string>({
-      topic: this.topic,
-      request: {
-        method: "signTransaction",
-        params: {
-          accountId: this.accountId.toString(),
-          executable: Buffer.from(transaction.toBytes()).toString("base64")
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    });
-
+const encodedTransaction = await this.wrappedRequest<string>({
+  topic: this.topic,
+  request: {
+    method: "signTransaction",
+    params: {
+      accountId:
+this.accountId.toString(),
+executable: Buffer.from(transaction.toBytes()).toString("base64")
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+});
     return Transaction.fromBytes(Buffer.from(encodedTransaction, "base64")) as T;
-  }
+}
 
-  async checkTransaction<T extends Transaction>(transaction: T): Promise<T> {
-    const transactionId = transaction.transactionId;
-    if (
-      transactionId != null &&
-      transactionId.accountId != null &&
-      transactionId.accountId.compare(this.accountId) !== 0
-    ) {
-      throw new Error(
-        "transaction's ID constructed with a different account ID"
-      );
-    }
-
+async checkTransaction<T extends Transaction>(transaction: T): Promise<T> {
+const transactionId = transaction.transactionId;
+if (
+transactionId != null &&
+transactionId.accountId != null &&
+transactionId.accountId.compare(this.accountId) !== 0
+) {
+throw new Error(
+"transaction's ID constructed with a different account ID"
+);
+}
     const nodeAccountIds = (
-      transaction.nodeAccountIds != null ? transaction.nodeAccountIds : []
-    ).map((nodeAccountId) => nodeAccountId.toString());
-    const network = Object.values(await this.getNetwork()).map(
-      (nodeAccountId) => nodeAccountId.toString()
-    );
+  transaction.nodeAccountIds != null ? transaction.nodeAccountIds : []
+).map((nodeAccountId) => nodeAccountId.toString());
+const network = Object.values(await this.getNetwork()).map(
+  (nodeAccountId) => nodeAccountId.toString()
+);
 
-    if (
-      !nodeAccountIds.reduce(
-        (previous, current) => previous && network.includes(current),
-        true
-      )
-    ) {
-      throw new Error(
-        "Transaction already set node account IDs to values not within the current network"
-      );
-    }
+if (
+  !nodeAccountIds.reduce(
+    (previous, current) => previous && network.includes(current),
+    true
+  )
+) {
+  throw new Error(
+    "Transaction already set node account IDs to values not within the current network"
+  );
+}
 
-    return Promise.resolve(transaction);
-  }
+return Promise.resolve(transaction);
+}
 
-  async populateTransaction<T extends Transaction>(transaction: T): Promise<T> {
-    transaction.setTransactionId(TransactionId.generate(this.accountId));
-    const network = Object.values(await this.getNetwork()).map(
-      (nodeAccountId) =>
-        typeof nodeAccountId === "string"
-          ? AccountId.fromString(nodeAccountId)
-          : new AccountId(nodeAccountId)
-    );
-    transaction.setNodeAccountIds(network);
-    return Promise.resolve(transaction);
-  }
+async populateTransaction<T extends Transaction>(transaction: T): Promise<T> {
+transaction.setTransactionId(TransactionId.generate(this.accountId));
+const network = Object.values(await this.getNetwork()).map(
+(nodeAccountId) =>
+typeof nodeAccountId === "string"
+? AccountId.fromString(nodeAccountId)
+: new AccountId(nodeAccountId)
+);
+transaction.setNodeAccountIds(network);
+return Promise.resolve(transaction);
+}
 
-  async call<RequestT, ResponseT, OutputT>(request: Executable<RequestT, ResponseT, OutputT>): Promise<OutputT> {
-    if (!isEncodable(request)) {
-      throw new Error("Argument is not executable");
-    }
-    const isTransactionType = isTransaction(request);
-    const result = await this.wrappedRequest<any>({
-      topic: this.topic,
-      request: {
-        method: "call",
-        params: {
-          accountId: this.accountId.toString(),
-          executable: Buffer.from(request.toBytes()).toString("base64"),
-          isTransaction: isTransactionType
-        }
-      },
-      chainId: getChainByLedgerId(this.ledgerId)
-    })
-
+async call<RequestT, ResponseT, OutputT>(request: Executable<RequestT, ResponseT, OutputT>): Promise<OutputT> {
+if (!isEncodable(request)) {
+throw new Error("Argument is not executable");
+}
+const isTransactionType = isTransaction(request);
+const result = await this.wrappedRequest<any>({
+topic: this.topic,
+request: {
+method: "call",
+params: {
+accountId: this.accountId.toString(),
+executable: Buffer.from(request.toBytes()).toString("base64"),
+isTransaction: isTransactionType
+}
+},
+chainId: getChainByLedgerId(this.ledgerId)
+})
     if (result.error) {
-      throw new Error(result.error);
-    }
+  throw new Error(result.error);
+}
 
-    if (!isTransactionType) {
-      // @ts-ignore
-      const responseTypeName = request.constructor.name.replace(/Query$/, "");
-      const output = await import("@hashgraph/sdk").then((module: any) => module[responseTypeName]);
-      const bytes = Buffer.from(result, "base64");
-      return output.fromBytes(bytes);
-    } else {
-      return TransactionResponse.fromJSON(result) as unknown as OutputT;
-    }
-  }
+if (!isTransactionType) {
+  // @ts-ignore
+  const responseTypeName = request.constructor.name.replace(/Query$/, "");
+  const output = await import("@hashgraph/sdk").then((module: any) => module[responseTypeName]);
+  const bytes = Buffer.from(result, "base64");
+  return output.fromBytes(bytes);
+} else {
+  return TransactionResponse.fromJSON(result) as unknown as OutputT;
+}
+}
 }
