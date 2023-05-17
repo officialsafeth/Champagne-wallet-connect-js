@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/officialsafeth/Champagne-wallet-connect-js"
+    "url": "https://github.com/hashgraph/hedera-wallet-connect"
   },
   "scripts": {
     "clean": "rimraf lib",
@@ -23,19 +23,19 @@
     "prepack": "npm run build"
   },
   "dependencies": {
+    "@hashgraph/sdk": "^2.25.0",
     "@json-rpc-tools/utils": "^2.0.0-beta.12",
-    "@hashgraph/sdk": "^2.19.1",
     "@walletconnect/core": "^2.1.3",
-    "@walletconnect/types": "^2.1.3",
-    "@walletconnect/sign-client": "^2.1.3",
     "@walletconnect/qrcode-modal": "^2.0.0-alpha.20",
+    "@walletconnect/sign-client": "^2.1.3",
+    "@walletconnect/types": "^2.1.3",
     "buffer": "^6.0.3",
     "events": "^3.3.0",
     "rxjs": "^7.5.7"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
-    "typescript": "^4.9.3",
-    "tslint": "^6.1.3"
+    "tslint": "^6.1.3",
+    "typescript": "^4.9.3"
   }
 }
