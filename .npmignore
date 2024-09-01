@@ -1,5 +1,10 @@
+# macOS-specific files
 .DS_Store
+
+# Node modules directory
 node_modules
+
+# Source directory
 src
 
 # Log files
@@ -8,7 +13,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor directories and files
+# IDE and Editor directories and files
 .idea
 .vscode
 *.suo
@@ -16,8 +21,11 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Configuration files
 tsconfig.json
 tslint.json
 package-lock.json
-.gitignore
 
+# Gitignore itself
+.gitignore
