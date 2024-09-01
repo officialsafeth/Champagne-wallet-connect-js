@@ -1,117 +1,27 @@
-/*
- *
- * Hedera Wallet Connect
- *
- * Copyright (C) 2023 Hedera Hashgraph, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 
-import SignClient from "@walletconnect/sign-client";
-import { from } from "rxjs";
-import { catchError, timeout } from "rxjs/operators";
-import { Signer } from "@hashgraph/sdk";
-import { SessionTypes, SignClientTypes } from "@walletconnect/types";
-import { getAppMetadata, getSdkError } from "@walletconnect/utils";
+import { Connector } from './Connector';
 
-declare type Client = SignClient.default;
+export class WalletConnector extends Connector {
+    private walletAddress: string | null;
 
-export class Connector {
-  protected readonly dAppMetadata: SignClientTypes.Metadata;
-  protected isInitializing: boolean = false;
-  protected client: Client | null = null;
-  protected session: SessionTypes.Struct | null = null;
-  protected signers: Signer[] = [];
-
-  protected constructor(metadata?: SignClientTypes.Metadata) {
-    this.dAppMetadata = metadata || getAppMetadata();
-  }
-
-  async checkPersistedState() {
-    if (!this.client) {
-      throw new Error("WC is not initialized");
+    constructor() {
+        super();
+        this.walletAddress = null;
     }
 
-    if (this.session) {
-      return this.session;
+    connectWallet(address: string): void {
+        this.walletAddress = address;
+        this.connect();
+        console.log(`Wallet connected: ${this.walletAddress}`);
     }
 
-    if (this.client.session.length) {
-      const sessionCheckPromises: Promise<SessionTypes.Struct | null>[] = this.client.session
-        .getAll()
-        .map((session: SessionTypes.Struct) => {
-          if (session.expiry * 1000 <= Date.now()) {
-            try {
-              this.client!.disconnect({
-                topic: session.topic,
-                reason: { code: 0, message: "Session expired" }
-              });
-            } catch (e) {
-              console.log("Non existing session with topic:", session.topic)
-            }
-            return Promise.reject("Session expired");
-          }
-          return new Promise((resolve, reject) =>
-            from(this.client!.ping({ topic: session.topic }))
-              .pipe(
-                timeout(3000),
-                catchError(async (err) => {
-                  try {
-                    await this.client!.disconnect({
-                      topic: session.topic,
-                      reason: { code: 0, message: "Ping was unsuccessful" }
-                    });
-                  } catch (e) {
-                    console.log("Non existing session with topic:", session.topic)
-                  }
-                  return reject("Non existing session");
-                })
-              ).subscribe(() => {
-              resolve(session);
-            })
-          );
-        });
-      this.session = await Promise.any(sessionCheckPromises).catch(() => null);
-      return this.session;
+    disconnectWallet(): void {
+        this.walletAddress = null;
+        this.disconnect();
+        console.log('Wallet disconnected');
     }
 
-    this.session = null;
-    return this.session;
-  }
-
-  async disconnect() {
-    if (!this.client) {
-      throw new Error("WC is not initialized");
+    getWalletAddress(): string | null {
+        return this.walletAddress;
     }
-    try {
-      if (this.session) {
-        await this.client.disconnect({
-          topic: this.session.topic,
-          reason: getSdkError("USER_DISCONNECTED")
-        });
-      }
-    } finally {
-      this.reset();
-    }
-  }
-
-  private reset() {
-    this.session = null;
-    this.signers = [];
-  }
-
-  get initialized(): boolean {
-    return Boolean(this.client && !this.isInitializing);
-  }
 }
