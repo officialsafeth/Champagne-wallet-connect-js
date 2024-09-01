@@ -1,27 +1,22 @@
 
-import { Connector } from './Connector';
-
-export class WalletConnector extends Connector {
-    private walletAddress: string | null;
+export class Connector {
+    private connected: boolean;
 
     constructor() {
-        super();
-        this.walletAddress = null;
+        this.connected = false;
     }
 
-    connectWallet(address: string): void {
-        this.walletAddress = address;
-        this.connect();
-        console.log(`Wallet connected: ${this.walletAddress}`);
+    connect(): void {
+        this.connected = true;
+        console.log('Connected');
     }
 
-    disconnectWallet(): void {
-        this.walletAddress = null;
-        this.disconnect();
-        console.log('Wallet disconnected');
+    disconnect(): void {
+        this.connected = false;
+        console.log('Disconnected');
     }
 
-    getWalletAddress(): string | null {
-        return this.walletAddress;
+    isConnected(): boolean {
+        return this.connected;
     }
 }
