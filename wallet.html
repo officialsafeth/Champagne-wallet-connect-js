@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champaign Wallet</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #1C3B70); /* Gradient from Sky Blue to Dark Blue */
+            color: #FFFFFF; /* White text */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: repeating-linear-gradient(
+                45deg,
+                #1C3B70,
+                #1C3B70 10px,
+                #16345C 10px,
+                #16345C 20px
+            ); /* Pixelated dark blue background */
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .wallet-name {
+            font-size: 24px;
+            margin: 0;
+            color: #FFFFFF; /* White text */
+        }
+
+        .theme-toggle {
+            background-color: #87CEEB; /* Sky Blue */
+            color: #1C3B70; /* Dark Blue */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px; /* Bubble shape */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        /* The rest of the styles remain the same */
+        .wallet-overview {
+            padding: 20px;
+            background-color: #1C3B70; /* Dark Blue background */
+            color: #FFFFFF; /* White text */
+        }
+
+        .balance-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .buy-button {
+            background-color: #87CEEB; /* Sky Blue */
+            color: #1C3B70; /* Dark Blue */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px; /* Bubble shape */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .buy-button:hover {
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        .assets-tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: #87CEEB; /* Sky Blue for inactive tabs */
+            font-size: 18px;
+            cursor: pointer;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            color: #FFFFFF; /* White for active tab */
+            border-bottom: 2px solid #FFFFFF; /* White */
+        }
+
+        .wallet-content {
+            padding: 20px;
+        }
+
+        .asset-list {
+            margin-bottom: 20px;
+        }
+
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #87CEEB; /* Sky Blue for divider */
+        }
+
+        .asset-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .asset-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .asset-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-name {
+            font-size: 18px;
+        }
+
+        .asset-value {
+            font-size: 14px;
+        }
+
+        .green {
+            color: #00FF00; /* Green for positive values */
+        }
+
+        .asset-balance {
+            text-align: right;
+        }
+
+        .asset-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button, .stake-button {
+            background-color: #87CEEB; /* Sky Blue */
+            color: #1C3B70; /* Dark Blue */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px; /* Bubble shape */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .action-button:hover, .stake-button:hover {
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        .wallet-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            width: 48%;
+            padding: 15px;
+        }
+
+        /* Your Retail NFTs Section */
+        .nft-section {
+            margin-top: 40px;
+        }
+
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 20px;
+        }
+
+        .nft-placeholder {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            background-color: #87CEEB; /* Sky Blue */
+            border-radius: 10px;
+            border: 2px solid #FFFFFF; /* White border */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="path-to-your-logo/safeth-logo.png" alt="Safeth Logo" class="logo">
+        <h1 class="wallet-name">Champaign Wallet</h1>
+        <button id="toggleTheme" class="theme-toggle">Toggle Theme</button>
+    </header>
+
+    <div class="wallet-overview">
+        <div class="balance-display">
+            <h2 class="balance-amount">$7,205.93</h2>
+            <button class="buy-button">Buy</button>
+        </div>
+        <div class="assets-tabs">
+            <button class="tab-button active">Assets</button>
+            <button class="tab-button">Dapps</button>
+            <button class="tab-button">History</button>
+            <button class="tab-button">Charts</button>
+        </div>
+    </div>
+
+    <main class="wallet-content">
+        <div class="asset-list">
+            <!-- HBAR Balance and Buttons -->
+            <div class="asset-item">
+                <div class="asset-info">
+                    <img src="path-to-your-logo/hbar-logo.png" alt="HBAR"
+                    <img src="path-to-your-logo/hbar-logo.png" alt="HBAR" class="asset-logo">
+                    <div class="asset-details">
+                        <span class="asset-name">HBAR</span>
+                        <span class="asset-value green">+3.29%</span>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <span>12,314.69</span>
+                    <span>$3,543.50</span>
+                </div>
+                <div class="asset-actions">
+                    <button class="action-button" onclick="deposit('HBAR')">Deposit</button>
+                    <button class="action-button" onclick="withdraw('HBAR')">Withdraw</button>
+                    <button class="stake-button" onclick="stakeTokens('HBAR')">Stake HBAR</button>
+                </div>
+            </div>
+
+            <!-- USDC Balance and Buttons -->
+            <div class="asset-item">
+                <div class="asset-info">
+                    <img src="path-to-your-logo/usdc-logo.png" alt="USDC" class="asset-logo">
+                    <div class="asset-details">
+                        <span class="asset-name">USDC</span>
+                        <span class="asset-value green">+0.00%</span>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <span>4,043.30</span>
+                    <span>$4,043.30</span>
+                </div>
+                <div class="asset-actions">
+                    <button class="action-button" onclick="deposit('USDC')">Deposit</button>
+                    <button class="action-button" onclick="withdraw('USDC')">Withdraw</button>
+                    <button class="stake-button" onclick="stakeTokens('USDC')">Stake USDC</button>
+                </div>
+            </div>
+
+            <!-- Safeth Cash Balance and Buttons -->
+            <div class="asset-item">
+                <div class="asset-info">
+                    <img src="path-to-your-logo/safeth-logo.png" alt="Safeth Cash" class="asset-logo">
+                    <div class="asset-details">
+                        <span class="asset-name">Safeth Cash</span>
+                        <span class="asset-value green">+4.44%</span>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <span>888.20</span>
+                    <span>$619.33</span>
+                </div>
+                <div class="asset-actions">
+                    <button class="action-button" onclick="deposit('Safeth Cash')">Deposit</button>
+                    <button class="action-button" onclick="withdraw('Safeth Cash')">Withdraw</button>
+                    <button class="stake-button" onclick="stakeTokens('Safeth Cash')">Stake Safeth Cash</button>
+                </div>
+            </div>
+
+            <!-- Safeth Token Balance and Buttons -->
+            <div class="asset-item">
+                <div class="asset-info">
+                    <img src="path-to-your-logo/safeth-token-logo.png" alt="Safeth Token" class="asset-logo">
+                    <div class="asset-details">
+                        <span class="asset-name">Safeth Token</span>
+                        <span class="asset-value green">+5.12%</span>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <span>1,200.50</span>
+                    <span>$812.35</span>
+                </div>
+                <div class="asset-actions">
+                    <button class="action-button" onclick="deposit('Safeth Token')">Deposit</button>
+                    <button class="action-button" onclick="withdraw('Safeth Token')">Withdraw</button>
+                    <button class="stake-button" onclick="stakeTokens('Safeth Token')">Stake Safeth Token</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan and NFT Creation Buttons -->
+        <div class="wallet-actions">
+            <button class="action-button" onclick="getLoan()">Get 0% Loan</button>
+            <button class="action-button">Create DUAL Product NFTs</button>
+        </div>
+
+        <!-- Your Retail NFTs Section -->
+        <section class="nft-section">
+            <h2>Your Retail NFTs</h2>
+            <div class="nft-grid">
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+                <div class="nft-placeholder"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Import the Hedera SDK (You must include the SDK in your project)
+        const { Client, ContractExecuteTransaction, Hbar } = window.hederaSDK;
+
+        // Hedera Client Setup
+        const client = Client.forTestnet(); // Change to Client.forMainnet() for mainnet
+        client.setOperator("YOUR_HEDERA_ACCOUNT_ID", "YOUR_HEDERA_PRIVATE_KEY");
+
+        // Contract IDs (replace these with your actual contract IDs)
+        const STAKING_CONTRACT_ID = "0.0.123456"; // Replace with your Staking Contract ID
+        const LOAN_CONTRACT_ID = "0.0.654321"; // Replace with your Loan Contract ID
+
+        // Function to Stake Tokens
+        async function stakeTokens(tokenId) {
+            try {
+                const transaction = new ContractExecuteTransaction()
+                    .setContractId(STAKING_CONTRACT_ID)
+                    .setGas(100000) // Set the appropriate gas limit
+                    .setFunction("stake", null) // Call the "stake" function on the contract
+                    .setPayableAmount(new Hbar(1)); // Optional: Set the amount of HBARs to send with the transaction
+
+                const txResponse = await transaction.execute(client);
+                const receipt = await txResponse.getReceipt(client);
+
+                if (receipt.status.toString() === 'SUCCESS') {
+                    alert(`Successfully staked ${tokenId}!`);
+                } else {
+                    alert(`Failed to stake ${tokenId}: ${receipt.status.toString()}`);
+                }
+            } catch (error) {
+                console.error("Error staking tokens:", error);
+            }
+        }
+
+        // Function to Get a 0% Loan
+        async function getLoan() {
+            try {
+                const transaction = new ContractExecuteTransaction()
+                    .setContractId(LOAN_CONTRACT_ID)
+                    .setGas(100000) // Set the appropriate gas limit
+                    .setFunction("getLoan", null) // Call the "getLoan" function on the contract
+                    .setPayableAmount(new Hbar(1)); // Optional: Set the amount of HBARs to send with the transaction
+
+                const txResponse = await transaction.execute(client);
+                const receipt = await txResponse.getReceipt(client);
+
+                if (receipt.status.toString() === 'SUCCESS') {
+                    alert('Loan acquired successfully at 0% interest!');
+                } else {
+                    alert(`Failed to acquire loan: ${receipt.status.toString()}`);
+                }
+            } catch (error) {
+                console.error("Error getting loan:", error);
+            }
+        }
+
+        // Placeholder functions for deposit and withdraw (You need to implement the actual logic)
+        function deposit(tokenId) {
+            alert(`Deposit function not yet implemented for ${tokenId}`);
+        }
+
+        function withdraw(tokenId) {
+            alert(`Withdraw function not yet implemented for ${tokenId}`);
+        }
+    </script>
+</body>
+</html>
