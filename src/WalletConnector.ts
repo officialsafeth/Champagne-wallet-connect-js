@@ -1,8 +1,8 @@
 /*-
  *
- * Hedera Wallet Connect
+ * Champagne Wallet Connect
  *
- * Copyright (C) 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2023 Safeth Ministries
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  *
  */
 
-import {Query, Signer, SignerSignature, Transaction} from "@hashgraph/sdk";
+import {Query, Signer, SignerSignature, Transaction} from "@safeth-wallet/sdk";
 import {formatJsonRpcError, formatJsonRpcResult} from "@json-rpc-tools/utils";
 import {SignClient} from "@walletconnect/sign-client";
 import {EngineTypes, PairingTypes, SessionTypes, SignClientTypes} from "@walletconnect/types";
@@ -43,7 +43,7 @@ export class WalletConnector extends Connector {
       this.isInitializing = true;
       this.client = await SignClient.init({
         relayUrl: "wss://relay.walletconnect.com",
-        projectId: "ce06497abf4102004138a10edd29c921",
+        projectId: "your-project-id-here",
         metadata: this.dAppMetadata
       });
       this.subscribeToEvents();
@@ -55,7 +55,7 @@ export class WalletConnector extends Connector {
 
   public async pair(uri: string): Promise<PairingTypes.Struct> {
     if (!this.initialized) {
-      throw new Error("WC not initialized");
+      throw new Error("WalletConnect not initialized");
     }
 
     return await this.client.pair({uri});
@@ -63,7 +63,7 @@ export class WalletConnector extends Connector {
 
   private subscribeToEvents() {
     if (!this.client) {
-      throw new Error("WC is not initialized");
+      throw new Error("WalletConnect is not initialized");
     }
     this.client.on("session_proposal", this.onSessionProposal.bind(this));
     this.client.on("session_request", this.onSessionRequest.bind(this));
