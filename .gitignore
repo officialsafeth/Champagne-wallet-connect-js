@@ -1,7 +1,14 @@
+# Visual Studio Code and JetBrains IDE directories
 .vscode/
 .idea/
-DS_Store
-.history
+
+# macOS-specific files
+.DS_Store
+
+# History directory (if any)
+.history/
+
+# Build output directory
 /lib
 
 # Logs
@@ -25,4 +32,3 @@ yarn-error.log*
 
 # Yarn Integrity file
 .yarn-integrity
-.DS_Store
