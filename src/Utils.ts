@@ -1,8 +1,8 @@
 /*-
  *
- * Hedera Wallet Connect
+ * Champagne Wallet Connect
  *
- * Copyright (C) 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2023 Safeth Ministries
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
  *
  */
 
-import {AccountId, LedgerId, PublicKey, SignerSignature, Transaction} from "@hashgraph/sdk";
+import {AccountId, LedgerId, PublicKey, SignerSignature, Transaction} from "@safeth-wallet/sdk";
 import {ProposalTypes, SessionTypes} from "@walletconnect/types";
 import {Buffer} from "buffer";
 
 const chainsMap = new Map();
-chainsMap.set(LedgerId.MAINNET.toString(), 295);
-chainsMap.set(LedgerId.TESTNET.toString(), 296);
-chainsMap.set(LedgerId.PREVIEWNET.toString(), 297);
+chainsMap.set(LedgerId.MAINNET.toString(), 1);
+chainsMap.set(LedgerId.TESTNET.toString(), 2);
+chainsMap.set(LedgerId.PREVIEWNET.toString(), 3);
 
 export enum METHODS {
   SIGN_TRANSACTION = "signTransaction",
@@ -48,7 +48,7 @@ export enum EVENTS {
 }
 
 export const getChainByLedgerId = (ledgerId: LedgerId): string => {
-  return `hedera:${chainsMap.get(ledgerId.toString())}`;
+  return `champagne:${chainsMap.get(ledgerId.toString())}`;
 }
 
 export const getLedgerIdByChainId = (chainId: string): string => {
@@ -58,7 +58,7 @@ export const getLedgerIdByChainId = (chainId: string): string => {
 
 export const getRequiredNamespaces = (ledgerId: LedgerId): ProposalTypes.RequiredNamespaces => {
   return {
-    hedera: {
+    champagne: {
       chains: [getChainByLedgerId(ledgerId)],
       methods: Object.values(METHODS),
       events: Object.values(EVENTS),
@@ -73,6 +73,7 @@ export const getLedgerIDsFromSession = (session: SessionTypes.Struct): LedgerId[
       return LedgerId.fromString(getLedgerIdByChainId(chainId));
     }));
 };
+
 export const getAccountLedgerPairsFromSession = (session: SessionTypes.Struct): {network: LedgerId, account: string}[] => {
   return Object.values(session?.namespaces || {})
     .flatMap(namespace => namespace.accounts.map(acc => {
