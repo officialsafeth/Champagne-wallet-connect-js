@@ -1,0 +1,49 @@
+
+# Exclude node_modules
+node_modules/
+
+# Exclude local environment files
+.env
+*.local
+
+# Exclude log files
+logs/
+*.log
+
+# Exclude build-related files
+dist/
+build/
+coverage/
+
+# Exclude TypeScript config and cache
+*.tsbuildinfo
+
+# Exclude test files
+tests/
+*.test.ts
+*.spec.ts
+
+# Exclude IDE configurations
+.vscode/
+.idea/
+
+# Exclude macOS files
+.DS_Store
+
+# Exclude package files specific to other package managers
+package-lock.json
+yarn.lock
+
+# Exclude the gitignore file itself
+.gitignore
+
+# Exclude the npmignore file
+.npmignore
+
+# Exclude readme if not necessary for the package
+README.md
+
+# Exclude any project-specific files that aren't needed for the npm package
+example/
+docs/
+scripts/
