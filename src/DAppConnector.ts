@@ -1,171 +1,25 @@
-/*
- *
- * Hedera Wallet Connect
- *
- * Copyright (C) 2023 Hedera Hashgraph, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 
-import {AccountId, LedgerId} from "@hashgraph/sdk";
-import {PrivateKey} from "@hashgraph/sdk"; // The new import
-import QRCodeModal from "@walletconnect/qrcode-modal";
-import {SignClient} from "@walletconnect/sign-client";
-import {SessionTypes, SignClientTypes} from "@walletconnect/types";
-import {Subject} from "rxjs";
-import {Connector} from "./Connector.js";
-import {
-  getAccountLedgerPairsFromSession, getExtensionMethodsFromSession,
-  getLedgerIDsFromSession,
-  getRequiredNamespaces
-} from "./Utils.js";
-import {WCSigner} from "./WCSigner.js";
-import {HWCError} from "./ErrorHelper.js";
+import { Connector } from './Connector';
 
-type WalletEvent = {
-  name: string,
-  data: any
-}
+export class DappConnector extends Connector {
+    private dappName: string;
 
-export type DAppMetadata = SignClientTypes.Metadata;
-
-export class DAppConnector extends Connector {
-  private allowedEvents: string[] = [];
-  private extensionMethods: string[] = [];
-  static instance: DAppConnector;
-  public $events: Subject<WalletEvent> = new Subject<WalletEvent>();
-
-  constructor(metadata?: DAppMetadata) {
-    super(metadata);
-    DAppConnector.instance = this;
-  }
-
-  async init(events: string[] = [], methods: string[] = []) {
-    this.allowedEvents = events;
-    this.extensionMethods = methods;
-    try {
-      this.isInitializing = true;
-      this.client = await SignClient.init({
-        relayUrl: "wss://relay.walletconnect.com",
-        projectId: "ce06497abf4102004138a10edd29c921",
-        metadata: this.dAppMetadata
-      });
-      this.subscribeToEvents();
-      const existingSession = await this.checkPersistedState();
-      if (existingSession) {
-        await this.onSessionConnected(existingSession);
-      }
-    } finally {
-      this.isInitializing = false;
-    }
-  }
-
-  private subscribeToEvents() {
-    if (!this.client) {
-      throw new Error("WC is not initialized");
+    constructor(dappName: string) {
+        super();
+        this.dappName = dappName;
     }
 
-    this.client.on("session_update", ({ topic, params }) => {
-      const { namespaces } = params;
-      const session = this.client!.session.get(topic);
-      const updatedSession = { ...session, namespaces };
-      this.onSessionConnected(updatedSession);
-    });
-    this.client.on("session_event", ({topic, params}) => {
-      if (params.chainId.includes("hedera:")) {
-        this.$events.next(params.event);
-      }
-    });
-  }
-
-  async connect(ledgerId: LedgerId = LedgerId.MAINNET, activeTopic?: string) {
-    if (!this.client) {
-      throw new Error("WC is not initialized");
-    }
-
-    if (this.session) {
-      const sessionNetworks = getLedgerIDsFromSession(this.session).map(l => l.toString());
-      if (sessionNetworks.includes(ledgerId.toString())) {
-        return;
-      }
-    }
-
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const requiredNamespaces = getRequiredNamespaces(ledgerId);
-        requiredNamespaces.hedera.events.push(...this.allowedEvents)
-        const { uri, approval } = await this.client.connect({
-          pairingTopic: activeTopic,
-          requiredNamespaces
-        });
-
-        if (uri) {
-          // @ts-ignore
-          QRCodeModal.open(uri, () => {
-            reject(new HWCError(402, "User rejected pairing", {}));
-          });
+    connectToDapp(): void {
+        if (!this.isConnected()) {
+            this.connect();
+            console.log(`Connected to Dapp: ${this.dappName}`);
         }
-
-        const session = await approval();
-        await this.onSessionConnected(session);
-        resolve();
-      } catch (e: any) {
-        reject(e);
-      } finally {
-        // @ts-ignore
-        QRCodeModal.close();
-      }
-    });
-  }
-
-  async prepareConnectURI(ledgerId: LedgerId = LedgerId.MAINNET, activeTopic?: string): Promise<{
-    uri?: string;
-    approval: () => Promise<SessionTypes.Struct>;
-  }> {
-    if (!this.client) {
-      throw new Error("WC is not initialized");
     }
 
-    if (this.session) {
-      const sessionNetworks = getLedgerIDsFromSession(this.session).map(l => l.toString());
-      if (sessionNetworks.includes(ledgerId.toString())) {
-        return;
-      }
+    disconnectFromDapp(): void {
+        if (this.isConnected()) {
+            this.disconnect();
+            console.log(`Disconnected from Dapp: ${this.dappName}`);
+        }
     }
-
-    const requiredNamespaces = getRequiredNamespaces(ledgerId);
-    requiredNamespaces.hedera.events.push(...this.allowedEvents);
-    requiredNamespaces.hedera.methods.push(...this.extensionMethods);
-    return this.client.connect({
-      pairingTopic: activeTopic,
-      requiredNamespaces
-    });
-  }
-
-  async onSessionConnected(session: SessionTypes.Struct) {
-    const allNamespaceAccounts = getAccountLedgerPairsFromSession(session);
-    this.session = session;
-    this.signers = allNamespaceAccounts.map(({account, network}) => new WCSigner(
-      AccountId.fromString(account),
-      this.client,
-      session.topic,
-      network,
-      getExtensionMethodsFromSession(session)
-    ))
-  }
-
-  getSigners() {
-    return this.signers;
-  }
 }
